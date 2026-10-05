@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en" class="dark-style layout-menu-fixed layout-compact" dir="ltr"
+  data-theme="theme-default"
+  data-assets-path="https://cdn-bt4team.pages.dev/assets/"
+  data-style="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <title>HrydzX Team | Level Up Bot — BR + LW</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="https://cdn-bt4team.pages.dev/assets/img/favicon/favicon.ico" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdn-bt4team.pages.dev/assets/vendor/fonts/fontawesome.css" />
+  <link rel="stylesheet" href="https://cdn-bt4team.pages.dev/assets/vendor/fonts/tabler-icons.css" />
+
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="https://cdn-bt4team.pages.dev/assets/vendor/css/rtl/core.css" />
+  <link rel="stylesheet" href="https://cdn-bt4team.pages.dev/assets/vendor/css/rtl/theme-default.css" />
+  <link rel="stylesheet" href="https://cdn-bt4team.pages.dev/assets/css/demo.css" />
+
+  <!-- Vendors CSS -->
+  <link rel="stylesheet" href="https://cdn-bt4team.pages.dev/assets/vendor/libs/node-waves/node-waves.css" />
+  <link rel="stylesheet" href="https://cdn-bt4team.pages.dev/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+
+  <!-- Helpers -->
+  <script src="https://cdn-bt4team.pages.dev/assets/vendor/js/helpers.js"></script>
+  <script src="https://cdn-bt4team.pages.dev/assets/vendor/js/template-customizer.js"></script>
+  <script src="https://cdn-bt4team.pages.dev/assets/js/config.js"></script>
+
+  <style>
+    /* ─── Accent tokens ─────────────────────────────────── */
+    :root {
+      --cyan:   #22d3ee;
+      --green:  #34d399;
+      --violet: #8b5cf6;
+      --amber:  #fbbf24;
+      --orange: #fb923c;
+      --red:    #fb7185;
+      --blue:   #4facfe;
+      --muted:  #8b97b3;
+      --line:   rgba(255,255,255,.08);
+    }
+
+    /* ─── Status badges ─────────────────────────────────── */
+    .sbadge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 3px 10px; border-radius: 999px;
+      font-size: 11px; font-weight: 700; white-space: nowrap;
+    }
+    .sbadge-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: currentColor;
+    }
+    .sbadge-dot.live { animation: blink 1.8s infinite; }
+    @keyframes blink { 50% { opacity: .3; } }
+
+    .st-online  { background: rgba(52,211,153,.12); color: var(--green);  border: 1px solid rgba(52,211,153,.25); }
+    .st-match   { background: rgba(34,211,238,.12); color: var(--cyan);   border: 1px solid rgba(34,211,238,.35); }
+    .st-search  { background: rgba(79,172,254,.12); color: var(--blue);   border: 1px solid rgba(79,172,254,.35); }
+    .st-paused  { background: rgba(251,191,36,.12); color: var(--amber);  border: 1px solid rgba(251,191,36,.35); }
+    .st-error   { background: rgba(251,113,133,.12);color: var(--red);    border: 1px solid rgba(251,113,133,.35);}
+    .st-offline { background: rgba(139,151,179,.12);color: var(--muted);  border: 1px solid rgba(139,151,179,.3); }
+
+    /* ─── Mode badges ───────────────────────────────────── */
+    .mbadge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 9px; border-radius: 7px;
+      font-size: 10px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase;
+    }
+    .mb-br   { background: rgba(251,146,60,.14); color: var(--orange); border: 1px solid rgba(251,146,60,.35); }
+    .mb-lw   { background: rgba(139,92,246,.16);  color: #c4b5fd;      border: 1px solid rgba(139,92,246,.4);  }
+    .mb-idle { background: rgba(139,151,179,.12); color: var(--muted); border: 1px solid rgba(139,151,179,.3); }
+
+    /* ─── Segmented mode control ────────────────────────── */
+    .seg {
+      display: inline-flex;
+      background: rgba(0,0,0,.3); border: 1px solid var(--line);
+      border-radius: 9px; padding: 2px; gap: 2px;
+    }
+    .seg button {
+      border: 0; background: transparent; color: var(--muted);
+      font-size: 10px; font-weight: 700; padding: 4px 9px;
+      border-radius: 7px; cursor: pointer; transition: .15s;
+    }
+    .seg button:hover    { color: #eef2fb; }
+    .seg button.on-auto  { background: rgba(34,211,238,.16);  color: var(--cyan);   }
+    .seg button.on-br    { background: rgba(251,146,60,.18);  color: var(--orange); }
+    .seg button.on-lw    { background: rgba(139,92,246,.22);  color: #c4b5fd;       }
+
+    /* ─── EXP 3-col grid ────────────────────────────────── */
+    .exp-grid {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 1px; background: var(--line); border-radius: 10px; overflow: hidden;
+    }
+    .exp-cell { background: rgba(0,0,0,.22); padding: 9px 11px; }
+    .exp-cell label {
+      display: block; font-size: 10px; color: var(--muted);
+      font-weight: 600; margin-bottom: 2px;
+    }
+    .exp-cell b { font-family: monospace; font-size: 13px; font-weight: 700; }
+    .gain { color: var(--green); }
+
+    /* ─── Match split ───────────────────────────────────── */
+    .msplit {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1px; background: var(--line); border-radius: 10px; overflow: hidden;
+    }
+    .msplit-cell {
+      background: rgba(0,0,0,.22); padding: 7px 11px;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 12px; color: var(--muted);
+    }
+    .msplit-cell b { font-family: monospace; font-size: 13px; }
+    .b-br { color: var(--orange); }
+    .b-lw { color: #c4b5fd; }
+
+    /* ─── Level progress bar ─────────────────────────────── */
+    .lvl-row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; margin-bottom: 5px; }
+    .lvl-num { color: var(--cyan); }
+    .lvl-hint { color: var(--muted); }
+    .pbar { height: 5px; background: var(--line); border-radius: 99px; overflow: hidden; }
+    .pbar-fill {
+      display: block; height: 100%;
+      background: linear-gradient(90deg, var(--cyan), var(--green));
+      border-radius: 99px; transition: width .5s;
+    }
+
+    /* ─── Account card footer ───────────────────────────── */
+    .acc-foot {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 8px; padding-top: 10px; border-top: 1px solid var(--line);
+      font-size: 11px; color: var(--muted);
+    }
+    .acc-foot > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+    .acts { display: flex; gap: 5px; flex: none; }
+    .icon-btn {
+      width: 30px; height: 30px; border-radius: 8px; cursor: pointer;
+      display: grid; place-items: center; font-size: 12px;
+      background: rgba(255,255,255,.04); border: 1px solid var(--line); color: var(--muted);
+      transition: .18s;
+    }
+    .icon-btn:hover                  { color: var(--cyan);  border-color: var(--cyan);  background: rgba(34,211,238,.1);  }
+    .icon-btn.pause-on               { color: var(--amber); border-color: var(--amber); background: rgba(251,191,36,.12); }
+    .icon-btn.danger:hover           { color: var(--red);   border-color: var(--red);   background: rgba(251,113,133,.1); }
+
+    /* ─── Stat icon circles ─────────────────────────────── */
+    .sico {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: grid; place-items: center; font-size: 18px; flex: none;
+    }
+    .sico-c { background: rgba(34,211,238,.14); color: var(--cyan);   }
+    .sico-g { background: rgba(52,211,153,.14);  color: var(--green);  }
+    .sico-v { background: rgba(139,92,246,.16);   color: #c4b5fd;      }
+    .sico-a { background: rgba(251,191,36,.14);  color: var(--amber);  }
+
+    /* ─── Header chips ──────────────────────────────────── */
+    .hchip {
+      display: inline-flex; align-items: center; gap: 6px;
+      height: 28px; padding: 0 10px; border-radius: 8px;
+      background: rgba(255,255,255,.05); border: 1px solid var(--line);
+      font-size: 12px; font-weight: 600; white-space: nowrap;
+    }
+    .hchip.online  { color: var(--green); }
+    .hchip.offline { color: var(--red);   }
+    .hchip-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 0 rgba(52,211,153,.6);
+      animation: ping 1.8s infinite;
+    }
+    .hchip-dot.off { background: var(--red); animation: none; }
+    @keyframes ping { 70% { box-shadow: 0 0 0 6px rgba(52,211,153,0); } 100% { box-shadow: 0 0 0 0 rgba(52,211,153,0); } }
+
+    /* ─── Spin on refresh ───────────────────────────────── */
+    .spin i { animation: rot .8s linear infinite; }
+    @keyframes rot { to { transform: rotate(360deg); } }
+
+    /* ─── Region badge ──────────────────────────────────── */
+    .rgn {
+      background: rgba(255,255,255,.09); color: #c7d2fe;
+      padding: 1px 6px; border-radius: 5px;
+      font-size: 9px; font-weight: 700;
+    }
+
+    /* ─── UID monospace ─────────────────────────────────── */
+    .uid-txt { font-family: monospace; font-size: 11px; color: var(--muted); }
+
+    /* ─── Log stream ────────────────────────────────────── */
+    .log-stream {
+      height: 520px; background: rgba(0,0,0,.28); border: 1px solid var(--line);
+      border-radius: 10px; padding: 10px 12px;
+      font-family: monospace; font-size: 11.5px;
+      overflow-y: auto; display: flex; flex-direction: column; gap: 5px;
+    }
+    .log-stream::-webkit-scrollbar       { width: 5px; }
+    .log-stream::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 3px; }
+    .log-item   { line-height: 1.55; word-break: break-word; }
+    .log-time   { color: #4b5b77; margin-right: 6px; }
+    .log-info    { color: #38bdf8; }
+    .log-success { color: #4ade80; }
+    .log-warning { color: #fbbf24; }
+    .log-error   { color: #f87171; }
+
+    /* ─── Empty state ───────────────────────────────────── */
+    .empty-st { text-align: center; padding: 44px 16px; color: var(--muted); }
+    .empty-st i { font-size: 34px; margin-bottom: 10px; opacity: .2; display: block; }
+
+    /* ─── Paused account ────────────────────────────────── */
+    .acc-paused-wrap .card { opacity: .74; border-style: dashed !important; }
+
+    /* ─── Form / Modal inputs ───────────────────────────── */
+    .modal-content { border-radius: 16px !important; }
+
+    /* ─── Responsive tweaks ─────────────────────────────── */
+    @media (max-width: 991px) {
+      .log-stream { height: 360px; }
+    }
+    @media (max-width: 575px) {
+      .hchip-label { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+  </style>
+</head>
+
+<body>
+  <div class="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
+    <div class="layout-container">
+
+      <!-- ───── Navbar ───── -->
+      <nav class="layout-navbar navbar navbar-expand-xl align-items-center bg-navbar-theme" id="layout-navbar">
+        <div class="container-xxl">
+          <div class="navbar-nav-right d-flex align-items-center justify-content-between w-100">
+
+            <!-- Brand -->
+            <div class="d-flex align-items-center gap-2">
+              <div style="width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--cyan),var(--violet));display:grid;place-items:center;color:#fff;font-size:14px;flex:none;">
+                <i class="fa-solid fa-bolt"></i>
+              </div>
+              <span class="fw-bold" style="font-size:15px;">HrydzX Team</span>
+              <span class="text-muted d-none d-md-inline" style="font-size:12px;">Level Up Bot &middot; BR + LW Auto</span>
+            </div>
+
+            <!-- Right chips + refresh -->
+            <div class="d-flex align-items-center gap-2">
+              <span class="hchip online" id="conn-chip">
+                <span class="hchip-dot" id="conn-dot"></span>
+                <span id="conn-text" class="hchip-label">Online</span>
+              </span>
+              <span class="hchip" style="color:var(--amber);border-color:rgba(251,191,36,.28);" title="Bot uptime">
+                <i class="fa-regular fa-clock"></i>
+                <span id="stat-uptime">00:00:00</span>
+              </span>
+              <button class="btn btn-sm btn-outline-secondary px-2" id="refresh-btn" onclick="fetchStats(true)" title="Refresh data" aria-label="Refresh">
+                <i class="fa-solid fa-rotate"></i>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </nav>
+      <!-- /Navbar -->
+
+      <div class="layout-page">
+        <div class="content-wrapper">
+          <div class="container-xxl flex-grow-1 container-p-y">
+
+            <!-- ───── Stats row ───── -->
+            <div class="row g-4 mb-4">
+              <div class="col-6 col-xl-3">
+                <div class="card h-100">
+                  <div class="card-body d-flex align-items-center gap-3 py-3">
+                    <div class="sico sico-c"><i class="fa-solid fa-users"></i></div>
+                    <div style="min-width:0;">
+                      <div class="fw-bold" style="font-size:22px;line-height:1.1;" id="stat-total-accounts">0</div>
+                      <div class="text-muted" style="font-size:12px;">Active Accounts</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-6 col-xl-3">
+                <div class="card h-100">
+                  <div class="card-body d-flex align-items-center gap-3 py-3">
+                    <div class="sico sico-g"><i class="fa-solid fa-angles-up"></i></div>
+                    <div style="min-width:0;">
+                      <div class="fw-bold" id="stat-total-exp" style="font-size:22px;line-height:1.1;color:var(--green);">+0 EXP</div>
+                      <div class="text-muted" style="font-size:12px;">Total EXP Gained</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-6 col-xl-3">
+                <div class="card h-100">
+                  <div class="card-body d-flex align-items-center gap-3 py-3">
+                    <div class="sico sico-v"><i class="fa-solid fa-gamepad"></i></div>
+                    <div style="min-width:0;">
+                      <div class="fw-bold" style="font-size:22px;line-height:1.1;" id="stat-total-matches">0</div>
+                      <div class="text-muted" style="font-size:12px;">Matches Completed</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-6 col-xl-3">
+                <div class="card h-100">
+                  <div class="card-body d-flex align-items-center gap-3 py-3">
+                    <div class="sico sico-a"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div style="min-width:0;">
+                      <div class="fw-bold" style="font-size:22px;line-height:1.1;" id="stat-online">0</div>
+                      <div class="text-muted" style="font-size:12px;">In Match Now</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /Stats -->
+
+            <!-- ───── Main two-column ───── -->
+            <div class="row g-4">
+
+              <!-- Account monitor -->
+              <div class="col-12 col-xl-8">
+                <div class="card">
+                  <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+                    <h5 class="card-title mb-0">
+                      <i class="fa-solid fa-user-astronaut me-2" style="color:var(--cyan);"></i>
+                      Account &amp; EXP Monitor
+                    </h5>
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="text-muted" style="font-size:11px;" id="last-update">—</span>
+                      <button class="btn btn-primary btn-sm" onclick="openAddModal()">
+                        <i class="fa-solid fa-plus me-1"></i>Add Account
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="row g-3" id="accounts-container">
+                      <div class="col-12">
+                        <div class="empty-st">
+                          <i class="fa-solid fa-circle-notch fa-spin"></i>
+                          <p>Loading accounts…</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bot log -->
+              <div class="col-12 col-xl-4">
+                <div class="card h-100">
+                  <div class="card-header d-flex align-items-center justify-content-between">
+                    <h5 class="card-title mb-0">
+                      <i class="fa-solid fa-terminal me-2" style="color:var(--green);"></i>Bot Log
+                    </h5>
+                    <span class="badge bg-label-success" style="font-size:10px;">Live</span>
+                  </div>
+                  <div class="card-body p-2">
+                    <div class="log-stream" id="log-stream">
+                      <div class="log-item"><span class="log-time">[--:--:--]</span><span class="log-info">Connecting to bot…</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <!-- /Main -->
+
+          </div>
+
+          <!-- ───── Footer ───── -->
+          <footer class="content-footer footer bg-footer-theme">
+            <div class="container-xxl">
+              <div class="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column gap-2">
+                <div class="text-body" style="font-size:13px;">
+                  © 2024 &ndash; <script>document.write(new Date().getFullYear())</script>
+                  <a href="#" class="footer-link fw-semibold">HrydzX Team</a>.
+                  All rights reserved.
+                </div>
+                <div class="text-muted" style="font-size:12px;">
+                  <i class="fa-solid fa-bolt me-1" style="color:var(--cyan);"></i>
+                  Level Up Bot &middot; BR + LW Auto
+                </div>
+              </div>
+            </div>
+          </footer>
+          <!-- /Footer -->
+
+          <div class="content-backdrop fade"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───── Add Account Modal ───── -->
+  <div class="modal fade" id="add-modal" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+
+        <div class="modal-header border-bottom" style="border-color:var(--line)!important;">
+          <h5 class="modal-title" id="modal-title">
+            <i class="fa-solid fa-user-plus me-2" style="color:var(--cyan);"></i>Add Account
+          </h5>
+          <button type="button" class="btn-close" id="modal-close-btn" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <form id="add-acc-form" onsubmit="submitAddAccount(event)">
+
+            <div class="mb-3">
+              <label for="acc-type" class="form-label fw-semibold" style="font-size:13px;">Account Type</label>
+              <select class="form-select" id="acc-type" onchange="toggleFormType()">
+                <option value="guest">Guest (UID + Password)</option>
+                <option value="token">Access Token</option>
+              </select>
+            </div>
+
+            <div id="guest-fields">
+              <div class="mb-3">
+                <label for="acc-uid" class="form-label fw-semibold" style="font-size:13px;">Guest UID</label>
+                <input type="text" class="form-control" id="acc-uid"
+                  placeholder="e.g. 7644913583" inputmode="numeric" autocomplete="off">
+              </div>
+              <div class="mb-3">
+                <label for="acc-password" class="form-label fw-semibold" style="font-size:13px;">Guest Password / Secret</label>
+                <input type="text" class="form-control" id="acc-password"
+                  placeholder="e.g. ZERO_GRAVITY_4NM38" autocomplete="off">
+              </div>
+            </div>
+
+            <div id="token-fields" style="display:none;">
+              <div class="mb-3">
+                <label for="acc-token" class="form-label fw-semibold" style="font-size:13px;">Access Token</label>
+                <textarea class="form-control" id="acc-token" rows="3"
+                  placeholder="Paste access token here…"></textarea>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 pt-1">
+              <button type="button" class="btn btn-outline-secondary" id="modal-cancel-btn">Cancel</button>
+              <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-plus me-1"></i>Save &amp; Start
+              </button>
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <!-- /Modal -->
+
+  <!-- Core JS -->
+  <script src="https://cdn-bt4team.pages.dev/assets/vendor/libs/jquery/jquery.js"></script>
+  <script src="https://cdn-bt4team.pages.dev/assets/vendor/libs/popper/popper.js"></script>
+  <script src="https://cdn-bt4team.pages.dev/assets/vendor/js/bootstrap.js"></script>
+  <script src="https://cdn-bt4team.pages.dev/assets/vendor/libs/node-waves/node-waves.js"></script>
+  <script src="https://cdn-bt4team.pages.dev/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+  <script src="https://cdn-bt4team.pages.dev/assets/vendor/libs/hammer/hammer.js"></script>
+  <script src="https://cdn-bt4team.pages.dev/assets/vendor/libs/i18n/i18n.js"></script>
+  <script src="https://cdn-bt4team.pages.dev/assets/vendor/js/menu.js"></script>
+  <script src="https://cdn-bt4team.pages.dev/assets/js/main.js"></script>
+
+  <!-- ───── App logic ───── -->
+  <script>
+  const startTime = Date.now();
+  const $ = id => document.getElementById(id);
+
+  /* ── Modal ─────────────────────────────────────────────── */
+  let _modal = null;
+  function getModal(){
+    if (!_modal) _modal = new bootstrap.Modal($('add-modal'));
+    return _modal;
+  }
+  function openAddModal(){ getModal().show(); }
+  function closeAddModal(){ getModal().hide(); }
+
+  $('modal-close-btn').addEventListener('click',  closeAddModal);
+  $('modal-cancel-btn').addEventListener('click', closeAddModal);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAddModal(); });
+
+  function toggleFormType(){
+    const t = $('acc-type').value;
+    $('guest-fields').style.display = t === 'guest' ? 'block' : 'none';
+    $('token-fields').style.display = t === 'token'  ? 'block' : 'none';
+  }
+
+  /* ── API helpers ────────────────────────────────────────── */
+  async function postJSON(url, payload){
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    return res.json();
+  }
+
+  /* ── Form submit ────────────────────────────────────────── */
+  async function submitAddAccount(e){
+    e.preventDefault();
+    const type = $('acc-type').value;
+    let payload = {};
+    if (type === 'guest'){
+      const uid = $('acc-uid').value.trim();
+      const password = $('acc-password').value.trim();
+      if (!uid || !password) return alert('Please fill in UID and password');
+      payload = { uid, password };
+    } else {
+      const token = $('acc-token').value.trim();
+      if (!token) return alert('Please fill in the token');
+      payload = { token };
+    }
+    try {
+      const data = await postJSON('/api/account/add', payload);
+      if (data.status === 'ok'){
+        closeAddModal();
+        $('add-acc-form').reset();
+        toggleFormType();
+        fetchStats();
+      } else {
+        alert('Failed to add account: ' + (data.error || 'Unknown error'));
+      }
+    } catch (err){ alert('Request failed: ' + err); }
+  }
+
+  /* ── Account actions ────────────────────────────────────── */
+  async function deleteAccount(uid){
+    if (!confirm('Delete account ' + uid + '?')) return;
+    try { await postJSON('/api/account/delete', { uid }); fetchStats(); }
+    catch (err){ console.error(err); }
+  }
+
+  async function refreshAccountInfo(uid){
+    try { await postJSON('/api/account/refresh', { uid }); fetchStats(); }
+    catch (err){ console.error(err); }
+  }
+
+  async function restartAccount(uid){
+    if (!confirm('Restart session for account ' + uid + '?')) return;
+    try { await postJSON('/api/account/restart', { uid }); fetchStats(); }
+    catch (err){ console.error(err); }
+  }
+
+  async function togglePause(uid, currentlyPaused){
+    try { await postJSON('/api/account/pause', { uid, paused: !currentlyPaused }); fetchStats(); }
+    catch (err){ console.error(err); }
+  }
+
+  async function setMode(uid, mode){
+    try {
+      const data = await postJSON('/api/account/mode', { uid, mode });
+      if (data.status !== 'ok') alert('Failed to change mode: ' + (data.error || 'Unknown'));
+      fetchStats();
+    } catch (err){ console.error(err); }
+  }
+
+  /* ── Helpers ────────────────────────────────────────────── */
+  function escapeHtml(t){
+    if (t === null || t === undefined) return '';
+    return String(t)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  function setConn(ok){
+    const dot  = $('conn-dot');
+    const text = $('conn-text');
+    const chip = $('conn-chip');
+    dot.classList.toggle('off', !ok);
+    text.textContent = ok ? 'Online' : 'Disconnected';
+    chip.className = 'hchip ' + (ok ? 'online' : 'offline');
+  }
+
+  function statusClass(acc){
+    if (acc.paused) return 'st-paused';
+    const s = (acc.status || '').toUpperCase();
+    if (s.startsWith('IN_MATCH'))                     return 'st-match';
+    if (s.startsWith('SEARCHING') || s==='CONNECTING')return 'st-search';
+    if (s === 'PAUSED')                               return 'st-paused';
+    if (s === 'ERROR')                                return 'st-error';
+    if (s === 'OFFLINE')                              return 'st-offline';
+    return 'st-online';
+  }
+
+  function statusText(acc){
+    if (acc.paused) return 'Paused';
+    const s = acc.status || 'ONLINE';
+    if (s.toUpperCase().startsWith('IN_MATCH'))
+      return `In Match (${acc.active_matches || 1})`;
+    return escapeHtml(s);
+  }
+
+  function modeBadge(acc){
+    const m = acc.mode;
+    if (m === 'BR') return '<span class="mbadge mb-br"><i class="fa-solid fa-parachute-box"></i>Battle Royale</span>';
+    if (m === 'LW') return '<span class="mbadge mb-lw"><i class="fa-solid fa-user-ninja"></i>Lone Wolf</span>';
+    return '<span class="mbadge mb-idle"><i class="fa-regular fa-circle"></i>Idle</span>';
+  }
+
+  function modeSeg(acc){
+    const ov  = (acc.mode_override || 'AUTO').toUpperCase();
+    const uid = escapeHtml(acc.uid);
+    return `
+      <div class="seg" role="group" aria-label="Mode">
+        <button class="${ov==='AUTO'?'on-auto':''}" title="Auto: Lv 1-2 → BR, Lv 3+ → LW" onclick="setMode('${uid}','AUTO')">AUTO</button>
+        <button class="${ov==='BR'?'on-br':''}"   title="Force Battle Royale"              onclick="setMode('${uid}','BR')">BR</button>
+        <button class="${ov==='LW'?'on-lw':''}"   title="Force Lone Wolf"                  onclick="setMode('${uid}','LW')">LW</button>
+      </div>`;
+  }
+
+  /* ── Build one account card ─────────────────────────────── */
+  function buildCard(acc){
+    const gained  = acc.gained_exp || 0;
+    const pct     = Math.min(100, Math.max(15, (acc.current_exp % 1000) / 10));
+    const uid     = escapeHtml(acc.uid);
+    const paused  = !!acc.paused;
+    const ov      = (acc.mode_override || 'AUTO').toUpperCase();
+    const autoHint = ov === 'AUTO'
+      ? `Lv ${acc.level} → ${acc.level >= 3 ? 'LW' : 'BR'}`
+      : `Locked: ${ov}`;
+    const sc = statusClass(acc);
+    const liveClass = (sc === 'st-online' || sc === 'st-match') ? ' live' : '';
+
+    return `
+<div class="col-12 col-md-6 ${paused ? 'acc-paused-wrap' : ''}">
+  <div class="card" style="border:1px solid rgba(255,255,255,.09);">
+    <div class="card-body d-flex flex-column gap-3">
+
+      <!-- Header row -->
+      <div class="d-flex align-items-center justify-content-between gap-2">
+        <div class="d-flex align-items-center gap-2 min-w-0" style="min-width:0;">
+          <div style="width:38px;height:38px;border-radius:10px;flex:none;display:grid;place-items:center;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.2);">
+            <i class="fa-solid fa-user" style="color:var(--cyan);"></i>
+          </div>
+          <div style="min-width:0;">
+            <div class="d-flex align-items-center gap-1 fw-bold" style="font-size:13px;flex-wrap:nowrap;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+              ${escapeHtml(acc.nickname)}
+              <span class="rgn ms-1">${escapeHtml(acc.region || 'BD')}</span>
+            </div>
+            <div class="uid-txt">UID ${uid}</div>
+          </div>
+        </div>
+        <div class="sbadge ${sc}" style="flex:none;">
+          <span class="sbadge-dot${liveClass}"></span>
+          ${statusText(acc)}
+        </div>
+      </div>
+
+      <!-- Mode row -->
+      <div class="d-flex align-items-center justify-content-between gap-2">
+        ${modeBadge(acc)}
+        ${modeSeg(acc)}
+      </div>
+
+      <!-- EXP -->
+      <div class="exp-grid">
+        <div class="exp-cell"><label>Initial</label><b>${(acc.initial_exp||0).toLocaleString()}</b></div>
+        <div class="exp-cell"><label>Current</label><b>${(acc.current_exp||0).toLocaleString()}</b></div>
+        <div class="exp-cell"><label>Gained</label><b class="gain">+${gained.toLocaleString()}</b></div>
+      </div>
+
+      <!-- Matches -->
+      <div class="msplit">
+        <div class="msplit-cell">
+          <span><i class="fa-solid fa-parachute-box me-1" style="color:var(--orange);"></i>BR</span>
+          <b class="b-br">${acc.br_matches||0}</b>
+        </div>
+        <div class="msplit-cell">
+          <span><i class="fa-solid fa-user-ninja me-1" style="color:#c4b5fd;"></i>LW</span>
+          <b class="b-lw">${acc.lw_matches||0}</b>
+        </div>
+      </div>
+
+      <!-- Level progress -->
+      <div>
+        <div class="lvl-row">
+          <span class="lvl-num">Level ${acc.level}</span>
+          <span class="lvl-hint">${autoHint} &middot; ${acc.matches_played} matches</span>
+        </div>
+        <div class="pbar"><span class="pbar-fill" style="width:${pct}%;"></span></div>
+      </div>
+
+      <!-- Footer -->
+      <div class="acc-foot">
+        <span>Last match: ${escapeHtml(acc.last_match_time || 'Running…')}</span>
+        <div class="acts">
+          <button class="icon-btn ${paused?'pause-on':''}"
+            title="${paused?'Resume account':'Pause account'}"
+            onclick="togglePause('${uid}',${paused})">
+            <i class="fa-solid ${paused?'fa-play':'fa-pause'}"></i>
+          </button>
+          <button class="icon-btn" title="Refresh profile / EXP"
+            onclick="refreshAccountInfo('${uid}')">
+            <i class="fa-solid fa-rotate"></i>
+          </button>
+          <button class="icon-btn" title="Restart session"
+            onclick="restartAccount('${uid}')">
+            <i class="fa-solid fa-arrow-rotate-right"></i>
+          </button>
+          <button class="icon-btn danger" title="Delete account"
+            onclick="deleteAccount('${uid}')">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>`;
+  }
+
+  /* ── Main fetch loop ────────────────────────────────────── */
+  async function fetchStats(manual){
+    const btn = $('refresh-btn');
+    if (manual) btn.classList.add('spin');
+    try {
+      const res  = await fetch('/api/stats');
+      const data = await res.json();
+      setConn(true);
+
+      $('stat-total-accounts').innerText = data.total_accounts;
+      $('stat-total-exp').innerText      = '+' + data.total_gained_exp.toLocaleString() + ' EXP';
+      $('stat-total-matches').innerText  = data.total_matches;
+      $('stat-online').innerText         = data.accounts.filter(a => (a.status||'').toUpperCase().startsWith('IN_MATCH')).length;
+      $('last-update').innerText         = 'Updated ' + new Date().toLocaleTimeString('en-US');
+
+      const box = $('accounts-container');
+      if (!data.accounts.length){
+        box.innerHTML = `
+          <div class="col-12">
+            <div class="empty-st">
+              <i class="fa-solid fa-ghost"></i>
+              <p>No active accounts yet.<br>Click <strong>Add Account</strong> to get started.</p>
+            </div>
+          </div>`;
+      } else {
+        box.innerHTML = data.accounts.map(buildCard).join('');
+      }
+
+      /* Logs */
+      const logBox  = $('log-stream');
+      const atBottom = logBox.scrollTop + logBox.clientHeight >= logBox.scrollHeight - 40;
+      logBox.innerHTML = data.logs.map(l =>
+        `<div class="log-item"><span class="log-time">[${escapeHtml(l.time)}]</span><span class="log-${escapeHtml(l.level)}">${escapeHtml(l.message)}</span></div>`
+      ).join('');
+      if (atBottom) logBox.scrollTop = logBox.scrollHeight;
+
+    } catch (err){
+      console.error('Failed to fetch stats:', err);
+      setConn(false);
+    } finally {
+      btn.classList.remove('spin');
+    }
+  }
+
+  /* ── Uptime counter ─────────────────────────────────────── */
+  setInterval(() => {
+    const s = Math.floor((Date.now() - startTime) / 1000);
+    const p = n => String(n).padStart(2,'0');
+    $('stat-uptime').innerText =
+      `${p(Math.floor(s/3600))}:${p(Math.floor(s%3600/60))}:${p(s%60)}`;
+  }, 1000);
+
+  /* ── Boot ───────────────────────────────────────────────── */
+  fetchStats();
+  setInterval(fetchStats, 2500);
+  </script>
+</body>
+</html>
